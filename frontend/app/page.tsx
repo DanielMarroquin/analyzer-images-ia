@@ -37,11 +37,11 @@ export default function Home() {
               <div className="flex items-center gap-2">
                 <span className="font-mono">v1.0</span>
                 <span>•</span>
-                <span>Powered by GPT-4 Vision</span>
+                <span>Prueba técnica Daniel Marroquin</span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="h-2 w-2 rounded-full bg-secondary" />
-                <span>Análisis en tiempo real</span>
+                <span>Análisis de imágenes en tiempo real</span>
               </div>
             </div>
           </div>
