@@ -11,7 +11,6 @@ export async function POST(request: NextRequest) {
 
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000"
 
-    // Envía el archivo al backend NestJS
     const backendFormData = new FormData()
     backendFormData.append("file", image)
 
