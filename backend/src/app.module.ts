@@ -8,7 +8,7 @@ import { HealthController } from './health/health.controller';
 @Module({
   imports: [
     HttpModule,
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
     SecurityModule,
     MainModule,
   ],
