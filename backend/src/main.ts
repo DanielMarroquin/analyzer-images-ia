@@ -2,15 +2,21 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const port = process.env.PORT ?? 3000;
+  
+  app.use(helmet());
+  
   app.setGlobalPrefix('api/v1');
   app.useGlobalPipes(new ValidationPipe({}));
   app.enableCors({
-    origin: '*',
-    //origin: ['http://localhost:4200'],
+    origin: process.env.NODE_ENV === 'production' 
+      ? ['https://yourdomain.com'] 
+      : ['http://localhost:3001', 'http://localhost:3000'],
+    credentials: true,
   });
   const config = new DocumentBuilder()
   .setTitle('Analyzer Images - Service API')

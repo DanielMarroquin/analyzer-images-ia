@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - GOOGLE_TYPE=${GOOGLE_TYPE}
+      - GOOGLE_PROJECT_ID=${GOOGLE_PROJECT_ID}
+      - GOOGLE_PRIVATE_KEY_ID=${GOOGLE_PRIVATE_KEY_ID}
+      - GOOGLE_PRIVATE_KEY=${GOOGLE_PRIVATE_KEY}
+      - GOOGLE_CLIENT_EMAIL=${GOOGLE_CLIENT_EMAIL}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_AUTH_URI=${GOOGLE_AUTH_URI}
+      - GOOGLE_TOKEN_URI=${GOOGLE_TOKEN_URI}
+      - GOOGLE_AUTH_PROVIDER_X509_CERT_URL=${GOOGLE_AUTH_PROVIDER_X509_CERT_URL}
+      - GOOGLE_CLIENT_X509_CERT_URL=${GOOGLE_CLIENT_X509_CERT_URL}
+      - GOOGLE_UNIVERSE_DOMAIN=${GOOGLE_UNIVERSE_DOMAIN}
+    volumes:
+      - ./backend/temp:/app/temp
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_BACKEND_URL=http://backend:3000
+    depends_on:
+      - backend
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  default:
+    name: analyzer-images-network

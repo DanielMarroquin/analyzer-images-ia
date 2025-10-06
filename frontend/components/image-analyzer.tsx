@@ -100,7 +100,7 @@ export function ImageAnalyzer() {
             <div className="flex items-center justify-center">
               <label
                 htmlFor="file-upload"
-                className="group flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-3 border-dashed border-white/20 bg-white/5 transition-all hover:bg-white/10 hover:border-secondary hover:shadow-lg hover:shadow-secondary/10 relative overflow-hidden"
+                className="group flex h-48 sm:h-56 md:h-64 w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-3 border-dashed border-white/20 bg-white/5 transition-all hover:bg-white/10 hover:border-secondary hover:shadow-lg hover:shadow-secondary/10 relative overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity" />
 
@@ -118,8 +118,8 @@ export function ImageAnalyzer() {
                       <ImageIcon className="h-12 w-12 text-white" />
                     </div>
                     <div className="text-center space-y-2">
-                      <p className="text-base font-semibold text-white">Click para seleccionar una imagen</p>
-                      <p className="text-sm text-white/50">PNG, JPG, WEBP hasta 10MB</p>
+                      <p className="text-sm sm:text-base font-semibold text-white">Click para seleccionar una imagen</p>
+                      <p className="text-xs sm:text-sm text-white/50">PNG, JPG, WEBP hasta 10MB</p>
                     </div>
                   </div>
                 )}
@@ -152,7 +152,7 @@ export function ImageAnalyzer() {
             <Button
               onClick={handleAnalyze}
               disabled={!selectedFile || isAnalyzing}
-              className="group relative w-full h-16 text-lg font-bold overflow-hidden rounded-2xl transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] disabled:hover:scale-100 disabled:opacity-50 border-0"
+              className="group relative w-full h-12 sm:h-14 md:h-16 text-base sm:text-lg font-bold overflow-hidden rounded-2xl transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] disabled:hover:scale-100 disabled:opacity-50 border-0"
               size="lg"
             >
               {/* Purple gradient background */}
@@ -238,7 +238,7 @@ export function ImageAnalyzer() {
                   <img
                     src={result.imageUrl || "/placeholder.svg"}
                     alt="Analyzed"
-                    className="h-72 w-full object-contain bg-gradient-to-br from-white/5 to-white/10"
+                    className="h-48 sm:h-56 md:h-72 w-full object-contain bg-gradient-to-br from-white/5 to-white/10"
                   />
                 </div>
               </div>
@@ -254,7 +254,7 @@ export function ImageAnalyzer() {
                   </Badge>
                 </div>
 
-                <div className="flex flex-wrap gap-2.5">
+                <div className="flex flex-wrap gap-2 sm:gap-2.5">
                   {result.tags.map((tag, index) => {
                     const colorStyles = [
                       "bg-primary/20 text-primary border-primary/30 hover:bg-primary/30",
@@ -267,7 +267,7 @@ export function ImageAnalyzer() {
                       <Badge
                         key={index}
                         variant="outline"
-                        className={`px-4 py-2 text-sm font-medium border-2 transition-all hover:scale-105 hover:shadow-md ${style}`}
+                        className={`px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium border-2 transition-all hover:scale-105 hover:shadow-md ${style}`}
                       >
                         {tag.label} ({(tag.confidence * 100).toFixed(1)}%) 
                       </Badge>
