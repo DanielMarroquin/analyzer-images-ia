@@ -13,9 +13,21 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1');
   app.useGlobalPipes(new ValidationPipe({}));
   app.enableCors({
-    origin: process.env.NODE_ENV === 'production' 
-      ? ['https://yourdomain.com'] 
-      : ['http://localhost:3001', 'http://localhost:3000'],
+    origin: function (origin, callback) {
+      if (process.env.NODE_ENV !== 'production') {
+        return callback(null, true);
+      }
+      
+      const allowedOrigins = [
+        'https://analyzer-images-ia-production.up.railway.app'
+      ];
+      
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   });
   const config = new DocumentBuilder()
