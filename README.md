@@ -1,159 +1,217 @@
 # 🖼️ Analyzer Images
 
-Aplicación web para análisis de imágenes con inteligencia artificial usando Google Vision API como parte de prueba técnica.
+Aplicación web para análisis de imágenes con inteligencia artificial usando Google Vision API — proyecto de prueba técnica.
 
-## 🚀 Características
+> **Demo pública**: Si no lo pueden ejecutar localmente, pueden usar la demo hospedada en:
+> **[https://analyzer-images.netlify.app/](https://analyzer-images.netlify.app/)**
 
-- **Backend**: API REST con NestJS
-- **Frontend**: Interfaz moderna con Next.js 15
-- **IA**: Análisis de imágenes con Google Vision API
-- **UX**: Diseño con animaciones y estados de carga
+## 🚀 Resumen
+
+* **Backend**: API REST con NestJS
+* **Frontend**: Next.js 15 (app router)
+* **IA**: Google Vision API
+* **UX**: Animaciones y estados de carga
+
+---
 
 ## 📋 Requisitos Previos
 
-- Node.js 18+ 
-- npm o pnpm
-- Cuenta de Google Cloud Platform
-- Credenciales de Google Vision API
+* Node.js **18.x** (recomendado LTS). Usa `nvm use 18` si tienes `nvm`.
+* npm o pnpm (si usas pnpm, ajusta los comandos).
+* Cuenta de Google Cloud con Vision API habilitada.
+* Archivo JSON de credenciales del Service Account (no subir al repo).
+
+---
+
+## Repositorio
+
+* Rama `master` (GitHub): [https://github.com/DanielMarroquin/analyzer-images-ia.git](https://github.com/DanielMarroquin/analyzer-images-ia.git)
+
+
 
 ## ⚙️ Variables de Entorno
 
-### Backend (.env)
-```env
-# Puerto del servidor
-PORT=3000
+### Opción recomendada (archivo JSON)
 
-# Google Vision API Credentials
+Guarda tu JSON de credenciales en el servidor/local como `./service-account.json` y exporta:
+
+```bash
+export GOOGLE_APPLICATION_CREDENTIALS="./service-account.json"
+```
+
+Esta forma evita problemas con saltos de línea en `GOOGLE_PRIVATE_KEY`.
+
+### Alternativa (variables individuales)
+
+Si prefieres usar `.env`, coloca **exactamente** las variables (nota: el manejo de `GOOGLE_PRIVATE_KEY` con saltos de línea puede necesitar `\\n` escapados).
+
+#### Backend (`backend/.env`)
+
+```env
+PORT=3000
 GOOGLE_TYPE=service_account
 GOOGLE_PROJECT_ID=tu-project-id
 GOOGLE_PRIVATE_KEY_ID=tu-private-key-id
-GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\ntu-private-key\n-----END PRIVATE KEY-----\n"
+GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\\n...tu clave...\\n-----END PRIVATE KEY-----\\n"
 GOOGLE_CLIENT_EMAIL=tu-service-account@tu-project.iam.gserviceaccount.com
-GOOGLE_CLIENT_ID=tu-client-id
-GOOGLE_AUTH_URI=https://accounts.google.com/o/oauth2/auth
-GOOGLE_TOKEN_URI=https://oauth2.googleapis.com/token
-GOOGLE_AUTH_PROVIDER_X509_CERT_URL=https://www.googleapis.com/oauth2/v1/certs
-GOOGLE_CLIENT_X509_CERT_URL=https://www.googleapis.com/robot/v1/metadata/x509/tu-service-account%40tu-project.iam.gserviceaccount.com
-GOOGLE_UNIVERSE_DOMAIN=googleapis.com
 ```
 
-### Frontend (.env.local)
+#### Frontend (`frontend/.env.local`)
+
 ```env
 NEXT_PUBLIC_BACKEND_URL=http://localhost:3000
 ```
 
-## 🛠️ Instalación y Ejecución
+> **Seguridad**: Nunca commitees credenciales. Añade los archivos JSON y `.env` a `.gitignore`.
 
-### 1. Clonar el repositorio
+**Enlaces seguros con .env (one-time secret):**
+
+* Enlace con `.env.local` del front: [https://eu.onetimesecret.com/secret/3t35l1k458gvddxetwg2clkbatmtjee](https://eu.onetimesecret.com/secret/3t35l1k458gvddxetwg2clkbatmtjee)
+* Enlace con `.env` del back: [https://eu.onetimesecret.com/secret/hyx15lbkiazmoa7480ulv4av7kd7u9s](https://eu.onetimesecret.com/secret/hyx15lbkiazmoa7480ulv4av7kd7u9s)
+
+---
+
+## 🛠️ Instalación y Ejecución (local)
+
+### 1. Clonar
+
 ```bash
-git clone <tu-repo-url>
+git clone https://github.com/DanielMarroquin/analyzer-images-ia.git
 cd analyzer-images-project
 ```
 
-### 2. Configurar Backend
+### 2. Backend
+
 ```bash
 cd backend
 npm install
-cp .env.example .env  # Configurar variables de entorno
-npm run start:dev
+# copiar ejemplo y editar .env si usas esa opción
+cp .env.example .env
+# Si usas JSON:
+# cp path/to/creds.json ./service-account.json
+# export GOOGLE_APPLICATION_CREDENTIALS="./service-account.json"
+
+npm run start:dev   # desarrollo (hot reload)
+# Para producción:
+npm run build
+npm run start:prod  # espera dist/ listo (explica cómo start:prod ejecuta node dist/main.js)
 ```
 
-### 3. Configurar Frontend
+**Dónde mirar**: build de NestJS en `backend/dist/`, logs en consola.
+
+### 3. Frontend
+
 ```bash
-cd frontend
+cd ../frontend
 npm install
-cp .env.example .env.local  # Configurar variables de entorno
-npm run dev
+cp .env.example .env.local
+npm run dev          # abre en http://localhost:3001 por defecto
+# Para producción
+npm run build
+npm run start        # correr build optimizada
 ```
 
-### 4. Acceder a la aplicación
-- **Frontend**: http://localhost:3001
-- **Backend API**: http://localhost:3000
-- **Documentación API**: http://localhost:3000/doc
+**Nota de puertos**: Por defecto el frontend se sirve en `http://localhost:3001`. Asegúrate que `NEXT_PUBLIC_BACKEND_URL` apunte al puerto correcto del backend (`http://localhost:3000`).
 
-## 📡 API Endpoints
+---
+
+## 🔗 Endpoints principales
 
 ### POST `/api/v1/analyzer-ia/image`
-Analiza una imagen y devuelve etiquetas con nivel de confianza.
 
-**Request:**
+Analiza una imagen y devuelve etiquetas con confianza.
+
+**Ejemplo curl**
+
 ```bash
-curl -X POST http://localhost:3000/api/v1/analyzer-ia/image \
+curl -X POST "${NEXT_PUBLIC_BACKEND_URL:-http://localhost:3000}/api/v1/analyzer-ia/image" \
   -F "file=@imagen.jpg"
 ```
 
-**Response:**
+**Ejemplo respuesta**
+
 ```json
 {
   "tags": [
-    {
-      "label": "Animal",
-      "confidence": 0.95
-    },
-    {
-      "label": "Dog",
-      "confidence": 0.87
-    }
+    { "label": "Animal", "confidence": 0.95 },
+    { "label": "Dog", "confidence": 0.87 }
   ]
 }
 ```
 
-## 🏗️ Estructura del Proyecto
+**Docs**: API docs disponibles en `http://localhost:3000/doc` (Swagger/OpenAPI) — verificar ruta en caso de configuraciones.
+
+---
+
+## 🏗️ Estructura del proyecto
 
 ```
-├── backend/                 # API NestJS
+├── backend/                 # API NestJS (src/, dist/)
 │   ├── src/
 │   │   ├── modules/
-│   │   │   └── analyzer-ia/ # Módulo principal
-│   │   │       ├── controllers/
-│   │   │       ├── services/
-│   │   │       └── providers/
+│   │   │   └── analyzer-ia/
 │   │   └── main.ts
 │   └── package.json
-├── frontend/               # App Next.js
-│   ├── app/
-│   ├── components/
+├── frontend/                # Next.js (app/, components/, .next/)
 │   └── package.json
 └── README.md
 ```
 
-## 🧪 Scripts Disponibles
+---
 
-### Backend
+## 🧪 Scripts disponibles (resumen)
+
+**Backend**
+
 ```bash
-npm run start:dev    # Desarrollo
-npm run build        # Build
-npm run start:prod   # Producción
-npm run test         # Tests
+npm run start:dev    # dev
+npm run build        # build -> dist/
+npm run start:prod   # start prod (ej. node dist/main.js)
+npm run test         # tests unitarios
 ```
 
-### Frontend
+**Frontend**
+
 ```bash
-npm run dev          # Desarrollo
-npm run build        # Build
-npm run start        # Producción
-npm run lint         # Linting
+npm run dev
+npm run build
+npm run start
+npm run lint
 ```
 
-## 🔧 Configuración de Google Vision API
+---
 
-1. Crear proyecto en [Google Cloud Console](https://console.cloud.google.com/)
-2. Habilitar Vision API
-3. Crear credenciales de Service Account
-4. Descargar archivo JSON de credenciales
-5. Configurar variables de entorno con los datos del JSON
+## 🔧 Configuración Google Vision (resumen rápido)
 
-## 📝 Notas
+1. Crear proyecto en Google Cloud Console.
+2. Habilitar Vision API.
+3. Crear Service Account con rol `Vision API User` (o similar).
+4. Descargar JSON de credenciales.
+5. Usar `GOOGLE_APPLICATION_CREDENTIALS` o mapear valores en `.env`.
 
-- **Tecnologías**: NestJS, Next.js 15, React 19, Google Vision API
-- **Autor**: Daniel Marroquin
+---
 
-## 🐛 Troubleshooting
+## 🐛 Troubleshooting (rápido)
 
-**Error de credenciales Google:**
-- Verificar que todas las variables de entorno estén configuradas
-- Asegurar que el Service Account tenga permisos de Vision API
+* **Credenciales Google**: Si recibes `invalid_client` o errores 401, revisa que `GOOGLE_APPLICATION_CREDENTIALS` apunte al JSON y que el Service Account tenga permisos.
+* **CORS**: Si el navegador bloquea llamadas al backend, revisa `CORS` en `main.ts` de NestJS y añade `http://localhost:3001`.
+* **Frontend no encuentra backend**: revisa `NEXT_PUBLIC_BACKEND_URL` y que backend esté levantado en el puerto indicado.
+* **Problemas con `GOOGLE_PRIVATE_KEY`**: usa la variable `GOOGLE_APPLICATION_CREDENTIALS` para evitar problemas con `\\n`.
 
-**Error de conexión Frontend-Backend:**
-- Verificar que `NEXT_PUBLIC_BACKEND_URL` apunte al puerto correcto
-- Confirmar que el backend esté ejecutándose en el puerto 3000
+---
+
+## ✅ Checklist para reviewers (qué se espera)
+
+* [ ] Instrucciones para levantar backend y frontend reproducibles.
+* [ ] `.env.example` y método recomendado (JSON) para credenciales.
+* [ ] Build de producción ejecutable (`npm run build` → `npm run start:prod`).
+* [ ] Tests unitarios disponibles y ejecutables.
+* [ ] Documentación de la API (Swagger/OpenAPI).
+* [ ] Demo pública: **[https://analyzer-images.netlify.app/](https://analyzer-images.netlify.app/)**
+
+---
+---
+
+## Autor
+
+Daniel Marroquín
