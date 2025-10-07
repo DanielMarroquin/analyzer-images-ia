@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No se proporcionó ninguna imagen" }, { status: 400 })
     }
 
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000"
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"
 
     const backendFormData = new FormData()
     backendFormData.append("file", image)

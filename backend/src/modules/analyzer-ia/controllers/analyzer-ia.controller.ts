@@ -13,7 +13,7 @@ import { AnalyzerImageDto } from "../dto/analyzer-image.dto";
 import { FileValidationPipe } from "../../../security/file-validation.pipe";
 
 @ApiTags("Analyzer IA")
-@Controller("api/v1/analyzer-ia")
+@Controller("analyzer-ia")
 export class AnalyzerIaController {
   constructor(private readonly analyzerIaService: AnalyzerIaservice) {}
 
