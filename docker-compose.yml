@@ -30,6 +30,8 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    networks:
+      - analyzer-network
 
   frontend:
     build:
@@ -41,15 +43,12 @@ services:
       - NODE_ENV=production
       - NEXT_PUBLIC_BACKEND_URL=http://backend:3000
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3001"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+    networks:
+      - analyzer-network
 
 networks:
-  default:
-    name: analyzer-images-network
+  analyzer-network:
+    driver: bridge
