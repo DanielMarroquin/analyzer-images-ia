@@ -37,34 +37,39 @@ export function ImageAnalyzer() {
 
   const handleAnalyze = async () => {
     if (!selectedFile) return
-
+  
     setIsAnalyzing(true)
     setError(null)
-
+  
     try {
       const formData = new FormData()
-      formData.append("image", selectedFile)
-
-      const response = await fetch("/api/analyze", {
+      formData.append("file", selectedFile)
+  
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://analyzer-images-ia.onrender.com"
+      
+      const response = await fetch(`${backendUrl}/api/v1/analyzer-ia/image`, {
         method: "POST",
         body: formData,
       })
-
+  
       if (!response.ok) {
-        throw new Error("Error al analizar la imagen")
+        const errorText = await response.text()
+        throw new Error(`Error del backend: ${response.status} - ${errorText}`)
       }
-
+  
       const data = await response.json()
       setResult({
-        tags: data.tags,
+        tags: data.tags || [], 
         imageUrl: previewUrl!,
       })
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error desconocido")
+      console.error("Error en análisis:", err)
     } finally {
       setIsAnalyzing(false)
     }
   }
+
 
   const handleReset = () => {
     setSelectedFile(null)
