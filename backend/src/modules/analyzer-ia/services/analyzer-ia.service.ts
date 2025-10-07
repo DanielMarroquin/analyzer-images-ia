@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { VisionProvider } from "../providers/services/vision.provider";
 import * as fs from "fs";
 import * as path from "path";
@@ -24,6 +24,8 @@ export class AnalyzerIaservice {
       
       return result;
 
+    } catch (error) {
+      throw new InternalServerErrorException('Error analizando imagen');
     } finally {
       if (fs.existsSync(tempPath)) {
         await fs.promises.unlink(tempPath);

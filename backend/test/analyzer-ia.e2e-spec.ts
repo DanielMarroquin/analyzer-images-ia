@@ -48,7 +48,7 @@ describe('AnalyzerIA (e2e)', () => {
       return request(app.getHttpServer())
         .post('/api/v1/analyzer-ia/image')
         .attach('file', mockImageBuffer, 'test.png')
-        .expect(200)
+        .expect(201)
         .expect((res) => {
           expect(res.body).toHaveProperty('tags');
           expect(Array.isArray(res.body.tags)).toBe(true);
